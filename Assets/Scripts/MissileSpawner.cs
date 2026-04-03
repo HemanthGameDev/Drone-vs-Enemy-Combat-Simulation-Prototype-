@@ -25,7 +25,7 @@ public class MiissileSpawner : MonoBehaviour
         {
             int randomIndex = Random.Range(0, missileSpawns.Length);
             missile.transform.position = missileSpawns[randomIndex].transform.position;
-            missile.transform.rotation = missileSpawns[randomIndex].transform.rotation;
+            missile.transform.rotation = missile.transform.rotation;
         }
     }
 }
