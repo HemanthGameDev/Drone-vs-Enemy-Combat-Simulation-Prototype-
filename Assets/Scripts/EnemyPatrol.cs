@@ -22,9 +22,9 @@ public class EnemyPatrol : MonoBehaviour
 
     void Update()
     {
-        if (waypoints.Length == 0) return;
+        // Don't do anything if the agent is stopped (enemy is in combat)
+        if (waypoints.Length == 0 || agent.isStopped) return;
 
-        // Check if reached waypoint
         if (!agent.pathPending && agent.remainingDistance < 0.5f)
         {
             GoToNextWaypoint();
