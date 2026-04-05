@@ -1,11 +1,14 @@
 using UnityEngine;
 using UnityEngine.AI;
+using System.Collections;
 
 public class DroneDetection : MonoBehaviour
 {
     [SerializeField] private EnemyPatrol enemyPatrol;
+    [SerializeField] private BulletSpawner bulletSpawner;
     [SerializeField] private GameObject aimTarget;
     [SerializeField] private float rotationSpeed = 5f; // How fast the soldier turns his body
+
 
     private Animator anim;
     private NavMeshAgent agent;
@@ -21,6 +24,7 @@ public class DroneDetection : MonoBehaviour
     {
         if (detectedDroneTransform != null)
         {
+            bulletSpawner.SpawnBullet();
             // 1. Keep the IK Aim Target on the drone
             aimTarget.transform.position = detectedDroneTransform.position;
 
@@ -44,6 +48,7 @@ public class DroneDetection : MonoBehaviour
 
             // Smoothly rotate toward the drone over time
             transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * rotationSpeed);
+            
         }
     }
 
@@ -53,6 +58,8 @@ public class DroneDetection : MonoBehaviour
         {
             anim.SetTrigger("Shoot");
             detectedDroneTransform = other.transform;
+            StartCoroutine(ShootAtDrone());
+            bulletSpawner.SpawnBullet();
 
             enemyPatrol.enabled = false;
             if (agent != null)
@@ -72,6 +79,7 @@ public class DroneDetection : MonoBehaviour
             detectedDroneTransform = null;
             anim.SetTrigger("TriggeredZone");
 
+
             // Re-enable NavMesh logic
             if (agent != null)
             {
@@ -82,6 +90,15 @@ public class DroneDetection : MonoBehaviour
 
             // Return target to a default position in front of the character
             aimTarget.transform.localPosition = new Vector3(0, 1.5f, 2f);
+        }
+    }
+    IEnumerator ShootAtDrone()
+    {
+        
+        {
+            yield return new WaitForSeconds(0.5f); // Initial delay before shooting starts
+            bulletSpawner.SpawnBullet();
+            yield return new WaitForSeconds(0.5f); // Adjust shooting frequency as needed
         }
     }
 }
