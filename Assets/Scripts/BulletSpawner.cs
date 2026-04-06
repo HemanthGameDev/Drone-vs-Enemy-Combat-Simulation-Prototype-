@@ -3,24 +3,21 @@ using UnityEngine;
 public class BulletSpawner : MonoBehaviour
 {
     [SerializeField] private GameObject bulletSpawnArea;
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-        
-    }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-    public void SpawnBullet()
+    public void SpawnBullet(Transform target)
     {
         GameObject bullet = BulletObjectPooling.Instance.GetBullet();
         if (bullet != null)
         {
             bullet.transform.position = bulletSpawnArea.transform.position;
-            bullet.transform.rotation = bulletSpawnArea.transform.rotation;
+
+            // Aim at the actual center of the drone's collider in world space.
+            // The drone's transform.position (pivot) is 2.2 units above its collider center,
+            // so LookAt(target.position) overshoots. bounds.center gives the true center.
+            Collider droneCollider = target.GetComponent<Collider>();
+            Vector3 aimPoint = droneCollider != null ? droneCollider.bounds.center : target.position;
+
+            bullet.transform.LookAt(aimPoint);
             bullet.SetActive(true);
         }
     }
