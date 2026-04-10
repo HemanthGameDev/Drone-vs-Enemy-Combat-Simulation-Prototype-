@@ -31,4 +31,11 @@ public class DroneController : MonoBehaviour
             droneRb.AddForce(Vector3.down * upDownSpeed * Time.fixedDeltaTime);
         }
     }
+    private void OnCollisionEnter(Collision other)
+    {
+        if (other.gameObject.CompareTag("Container"))
+        {
+            Debug.Log("Collided with Container");
+        }
+    }
 }
